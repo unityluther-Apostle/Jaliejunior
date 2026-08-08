@@ -1,0 +1,8 @@
+nicegui
+bcrypt
+requests
+polars
+fastapi
+starlette
+boto3
+libsql
