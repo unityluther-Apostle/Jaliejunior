@@ -112,17 +112,18 @@ def update_login_activity(username, status='Active'):
 # ============================================================
 # GLOBAL UI SETTINGS
 # ============================================================
-ui.colors(primary='#800000', secondary='#ffffff', accent='#f59e0b')
+# Strictly Navy Blue and White palette
+ui.colors(primary='#0A192F', secondary='#FFFFFF', accent='#1E3A8A')
 
 
 # ============================================================
-# CUSTOM UI ANIMATIONS
+# CUSTOM UI ANIMATIONS & OVERRIDES
 # ============================================================
 ui.add_css('''
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(26px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -131,36 +132,54 @@ ui.add_css('''
 }
 
 .animate-fade-in-up {
-    animation: fadeInUp 0.7s ease-out both;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@keyframes floatSlow {
+@keyframes meshMove {
     0%, 100% {
-        transform: translateY(0px) scale(1);
+        transform: translate(0, 0) scale(1);
     }
-    50% {
-        transform: translateY(-18px) scale(1.04);
+    33% {
+        transform: translate(40px, -60px) scale(1.1);
     }
-}
-
-.animate-float-slow {
-    animation: floatSlow 9s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.55;
-    }
-    50% {
-        opacity: 0.95;
+    66% {
+        transform: translate(-30px, 30px) scale(0.95);
     }
 }
 
-.animate-glow-pulse {
-    animation: glowPulse 4s ease-in-out infinite;
+.animate-mesh {
+    animation: meshMove 18s ease-in-out infinite;
+}
+
+/* Force Quasar Tabs to strictly use Navy Blue and White */
+.q-tab--active {
+    background-color: #0A192F !important;
+    color: #FFFFFF !important;
+}
+.q-tab__indicator {
+    display: none !important;
+}
+.q-tab {
+    color: #0A192F !important;
+}
+.q-tab:hover {
+    background-color: rgba(10, 25, 47, 0.05) !important;
+}
+
+/* Ensure inputs strictly use Navy Blue */
+.q-field--outlined .q-field__control:before {
+    border-color: rgba(10, 25, 47, 0.3) !important;
+}
+.q-field--outlined .q-field__control:after {
+    border-color: #0A192F !important;
+}
+.q-field__label {
+    color: #0A192F !important;
+}
+.q-field__native, .q-field__input {
+    color: #0A192F !important;
 }
 ''')
-
 
 
 # SIMPLE REDIRECT HELPERS
@@ -200,7 +219,7 @@ def protected_home():
     is_admin = app.storage.user.get('is_admin', False) or is_admin_username(current_user)
 
     if not is_admin:
-        ui.notify('Home is for administrators only', type='negative', position='top')
+        ui.notify('Home is for administrators only', color='#0A192F', textColor='white', position='top')
         redirect_to_teacher()
         return
 
@@ -252,458 +271,310 @@ def lower_page():
 
 
 
-# REDESIGNED LOGIN PAGE
+# REDESIGNED LOGIN PAGE (NAVY BLUE & WHITE INTERFACE)
 
 def login_page():
-    # Full-screen background
+    # Full-screen background (Deep Navy Blue)
     with ui.row().classes(
-        'fixed inset-0 w-screen h-screen m-0 p-0 bg-slate-950 overflow-y-auto'
+        'fixed inset-0 w-screen h-screen m-0 p-0 bg-[#0A192F] overflow-y-auto'
     ):
-        # Background gradient
-        ui.element('div').classes('absolute inset-0 pointer-events-none').style(
-            '''
-            background:
-                linear-gradient(135deg, #020617 0%, #190303 42%, #4d0000 100%);
-            '''
-        )
+        # Subtle grid background (White with low opacity)
+        ui.element('div').classes('absolute inset-0 pointer-events-none').style('''
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        ''')
 
-        # Decorative glowing shapes
+        # Mesh gradient blobs (White with low opacity)
         ui.element('div').classes(
-            'absolute -top-48 -left-48 w-[520px] h-[520px] rounded-full '
-            'bg-[#800000]/45 blur-3xl animate-glow-pulse pointer-events-none'
+            'absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full '
+            'bg-white/5 blur-[100px] animate-mesh pointer-events-none'
         )
-
         ui.element('div').classes(
-            'absolute -bottom-64 -right-44 w-[620px] h-[620px] rounded-full '
-            'bg-amber-500/10 blur-3xl animate-float-slow pointer-events-none'
-        )
-
-        ui.element('div').classes('absolute inset-0 pointer-events-none').style(
-            '''
-            background:
-                radial-gradient(circle at 18% 18%, rgba(255,255,255,0.08), transparent 30%),
-                radial-gradient(circle at 82% 8%, rgba(245,158,11,0.14), transparent 32%),
-                radial-gradient(circle at 88% 78%, rgba(128,0,0,0.36), transparent 46%);
-            '''
-        )
+            'absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full '
+            'bg-white/5 blur-[120px] animate-mesh pointer-events-none'
+        ).style('animation-delay: -5s;')
 
         # Main content
-        with ui.row().classes(
-            'relative z-10 w-full min-h-full items-center justify-center p-4 md:p-10 gap-10'
+        with ui.column().classes(
+            'relative z-10 w-full min-h-screen items-center justify-center p-4 gap-6'
         ):
-            # Left branding panel, hidden on small screens
-            with ui.column().classes(
-                'hidden lg:flex flex-col items-start justify-center max-w-xl gap-7 animate-fade-in-up'
-            ):
-                with ui.row().classes('items-center gap-5'):
+            
+            # Login Card (Crisp White)
+            with ui.card().classes(
+                'w-full max-w-[480px] rounded-3xl border-2 border-[#0A192F] '
+                'bg-white shadow-2xl shadow-[#0A192F]/30 animate-fade-in-up'
+            ).tight():
+                
+                # Header
+                with ui.column().classes('w-full p-8 pb-4 items-center'):
                     with ui.element('div').classes(
-                        'w-20 h-20 rounded-3xl overflow-hidden ring-2 ring-amber-400/70 '
-                        'shadow-2xl shadow-black/50'
+                        'w-16 h-16 rounded-2xl bg-[#0A192F] '
+                        'flex items-center justify-center shadow-lg mb-4'
                     ):
-                        ui.image('badge.jpeg').classes('w-full h-full object-cover')
+                        ui.icon('school').classes('text-4xl text-white')
+                    
+                    ui.label('EduPortal').classes('text-2xl font-bold text-[#0A192F] tracking-tight')
+                    ui.label('School Management System').classes('text-sm text-[#0A192F]/60 mb-6')
 
-                    with ui.column().classes('gap-1'):
-                        ui.label('Institutional Portal').classes(
-                            'text-4xl font-black tracking-tight text-white'
+                    # Tabs
+                    with ui.tabs().classes(
+                        'w-full rounded-xl bg-[#0A192F]/5 p-1 border border-[#0A192F]/10'
+                    ) as tabs:
+                        login_tab = ui.tab('login', label='Sign In').classes(
+                            'flex-1 rounded-lg text-xs font-semibold uppercase tracking-wider'
                         )
-                        ui.label('Secure Access Management').classes(
-                            'text-[11px] font-bold uppercase tracking-[0.35em] text-amber-200/90'
+                        register_tab = ui.tab('register', label='Register').classes(
+                            'flex-1 rounded-lg text-xs font-semibold uppercase tracking-wider'
                         )
-
-                ui.label(
-                    'Access your administrative dashboard, teacher workspace, and school '
-                    'management tools from one secure entry point.'
-                ).classes(
-                    'text-lg leading-relaxed text-slate-200/90'
-                )
-
-                with ui.row().classes('gap-3 flex-wrap'):
-                    with ui.row().classes(
-                        'items-center gap-2 rounded-2xl border border-white/10 bg-white/5 '
-                        'px-4 py-3 backdrop-blur'
-                    ):
-                        ui.icon('person').classes('text-amber-300')
-                        ui.label('Role-based access').classes('text-sm font-semibold text-white')
-
-                    with ui.row().classes(
-                        'items-center gap-2 rounded-2xl border border-white/10 bg-white/5 '
-                        'px-4 py-3 backdrop-blur'
-                    ):
-                        ui.icon('timeline').classes('text-amber-300')
-                        ui.label('Activity monitoring').classes('text-sm font-semibold text-white')
-
-                    with ui.row().classes(
-                        'items-center gap-2 rounded-2xl border border-white/10 bg-white/5 '
-                        'px-4 py-3 backdrop-blur'
-                    ):
-                        ui.icon('lock').classes('text-amber-300')
-                        ui.label('Secure sessions').classes('text-sm font-semibold text-white')
-
-            # Right login card panel
-            with ui.column().classes(
-                'w-full max-w-[560px] animate-fade-in-up'
-            ):
-                with ui.card().classes(
-                    'w-full rounded-[32px] border border-white/15 bg-white/[0.97] '
-                    'backdrop-blur-2xl overflow-hidden hover:shadow-2xl transition-all'
-                ).tight():
-                    # Top gradient strip
-                    ui.element('div').classes(
-                        'h-1.5 w-full bg-gradient-to-r from-[#800000] via-amber-500 to-[#800000]'
-                    )
-
-                    with ui.column().classes('w-full p-7 md:p-10'):
-
-                        # Mobile header
-                        with ui.column().classes('w-full items-center mb-8 lg:hidden'):
-                            with ui.row().classes(
-                                'w-16 h-16 rounded-3xl overflow-hidden mb-4 '
-                                'ring-2 ring-[#800000]/20 shadow-xl'
-                            ):
-                                ui.image('badge.jpeg').classes('w-full h-full object-cover')
-
-                            ui.label('Institutional Portal').classes(
-                                'text-2xl font-black tracking-tight text-slate-900 text-center'
-                            )
-
-                            ui.label('Secure Access Management').classes(
-                                'text-[10px] font-bold uppercase tracking-[0.28em] '
-                                'text-slate-400 mt-1 text-center'
-                            )
-
-                        # Desktop header
-                        with ui.column().classes('w-full mb-8 hidden lg:flex'):
-                            ui.label('Welcome back').classes(
-                                'text-3xl font-black tracking-tight text-slate-900'
-                            )
-                            ui.label('Sign in to continue to your dashboard.').classes(
-                                'text-sm text-slate-500 mt-1'
-                            )
-
-                        # Tabs
-                        with ui.tabs().classes(
-                            'w-full rounded-2xl bg-slate-100 p-1 shadow-inner'
-                        ) as tabs:
-                            login_tab = ui.tab('login', label='Login').classes(
-                                'flex-1 rounded-xl text-[11px] font-black uppercase tracking-wider'
-                            )
-                            register_tab = ui.tab('register', label='Register').classes(
-                                'flex-1 rounded-xl text-[11px] font-black uppercase tracking-wider'
-                            )
-                            reset_tab = ui.tab('reset', label='Reset').classes(
-                                'flex-1 rounded-xl text-[11px] font-black uppercase tracking-wider'
-                            )
-
-                        with ui.tab_panels(tabs, value=login_tab).classes(
-                            'w-full bg-transparent mt-6'
-                        ):
-
+                        reset_tab = ui.tab('reset', label='Reset').classes(
+                            'flex-1 rounded-lg text-xs font-semibold uppercase tracking-wider'
+                        )
+                
+                with ui.tab_panels(tabs, value=login_tab).classes(
+                    'w-full bg-transparent p-6 pt-2'
+                ):
+                    
+                    # LOGIN TAB
+                    with ui.tab_panel(login_tab).classes('p-0'):
+                        with ui.column().classes('w-full gap-5'):
                             
-                            # LOGIN TAB
+                            username_input = ui.input(label='Username').classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space '
+                                'placeholder="Enter your username"'
+                            )
                             
-                            with ui.tab_panel(login_tab).classes('p-0'):
-                                with ui.column().classes('w-full gap-4'):
+                            password_input = ui.input(
+                                label='Password',
+                                password=True,
+                                password_toggle_button=True
+                            ).classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space '
+                                'placeholder="Enter your password"'
+                            )
 
-                                    with ui.row().classes('items-center gap-2'):
-                                        ui.icon('person').classes('text-slate-400 text-lg')
-                                        ui.label('Username').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            with ui.row().classes('w-full justify-end -mt-2'):
+                                ui.link(
+                                    'Forgot password?',
+                                    '#'
+                                ).on(
+                                    'click',
+                                    lambda: tabs.set_value(reset_tab)
+                                ).classes(
+                                    'text-xs font-semibold text-[#0A192F] hover:text-[#1E3A8A] transition-colors cursor-pointer underline'
+                                )
 
-                                    username_input = ui.input().classes('w-full').props(
-                                        'outlined dense rounded placeholder="Enter your username"'
-                                    )
+                            with ui.button().classes(
+                                'w-full py-3 mt-2 rounded-xl text-white font-bold text-sm tracking-wide '
+                                'bg-[#0A192F] hover:bg-[#112240] active:scale-[0.98] transition-all '
+                                'shadow-lg shadow-[#0A192F]/20 justify-center items-center gap-2'
+                            ).props('unelevated no-caps') as login_btn:
+                                login_spinner = ui.spinner(size='sm', color='white').classes('hidden')
+                                ui.label('Sign In').classes('font-semibold')
 
-                                    with ui.row().classes('items-center gap-2 mt-2'):
-                                        ui.icon('lock').classes('text-slate-400 text-lg')
-                                        ui.label('Password').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            with ui.row().classes('w-full justify-center items-center gap-2 mt-4'):
+                                ui.label('New to the platform?').classes('text-xs text-[#0A192F]/60')
+                                ui.link(
+                                    'Create an account',
+                                    '#'
+                                ).on(
+                                    'click',
+                                    lambda: tabs.set_value(register_tab)
+                                ).classes(
+                                    'text-xs font-bold text-[#0A192F] hover:text-[#1E3A8A] transition-colors cursor-pointer underline'
+                                )
 
-                                    password_input = ui.input(
-                                        password=True,
-                                        password_toggle_button=True
-                                    ).classes('w-full').props(
-                                        'outlined dense rounded placeholder="Enter your password"'
-                                    )
+                        async def handle_page():
+                            username = username_input.value.strip()
+                            password = password_input.value
 
-                                    with ui.row().classes('w-full justify-end -mt-1'):
-                                        ui.link(
-                                            'Forgot password?',
-                                            '#'
-                                        ).on(
-                                            'click',
-                                            lambda: tabs.set_value(reset_tab)
-                                        ).classes(
-                                            'text-xs font-semibold text-[#800000] '
-                                            'hover:text-amber-600 transition-colors cursor-pointer'
-                                        )
+                            # Validate empty fields
+                            if not username or not password:
+                                ui.notify('Please fill the fields', color='#0A192F', textColor='white', position='top')
+                                return
 
-                                    with ui.button().classes(
-                                        'w-full py-4 mt-2 rounded-2xl text-white font-black '
-                                        'text-sm tracking-[0.18em] bg-gradient-to-r '
-                                        'from-[#800000] to-[#500000] hover:from-[#6d0000] '
-                                        'hover:to-[#430000] active:scale-[0.99] transition-all '
-                                        'shadow-xl shadow-[#800000]/40 justify-center items-center gap-2'
-                                    ).props('unelevated no-caps') as login_btn:
-                                        login_spinner = ui.spinner(size='sm', color='white').classes('hidden')
-                                        ui.label('SIGN IN').classes('font-black')
+                            # Show loading state
+                            login_btn.disable()
+                            login_spinner.classes(remove='hidden')
 
-                                    with ui.row().classes('w-full justify-center items-center gap-2 mt-3'):
-                                        ui.label('New here?').classes(
-                                            'text-xs font-semibold text-slate-400'
-                                        )
-                                        ui.link(
-                                            'Create an account',
-                                            '#'
-                                        ).on(
-                                            'click',
-                                            lambda: tabs.set_value(register_tab)
-                                        ).classes(
-                                            'text-xs font-black text-[#800000] '
-                                            'hover:text-amber-600 transition-colors cursor-pointer'
-                                        )
+                            try:
+                                authenticated = authenticate_user(username, password)
 
-                                async def handle_page():
-                                    username = username_input.value.strip()
-                                    password = password_input.value
+                                if authenticated:
+                                    admin_user = is_admin_username(username)
 
-                                    # Validate empty fields
-                                    if not username or not password:
-                                        ui.notify('Please fill the fields', type='warning', position='top')
-                                        return
+                                    # Save login state
+                                    app.storage.user['logged_in'] = True
+                                    app.storage.user['current_user'] = username
+                                    app.storage.user['username'] = username
+                                    app.storage.user['name'] = username
+                                    app.storage.user['is_admin'] = admin_user
 
-                                    # Show loading state
-                                    login_btn.disable()
-                                    login_spinner.classes(remove='hidden')
+                                    # Record login activity
+                                    update_login_activity(username, 'Active')
 
-                                    try:
-                                        authenticated = authenticate_user(username, password)
+                                    ui.notify('Login successful!', color='#0A192F', textColor='white', position='top')
 
-                                        if authenticated:
-                                            admin_user = is_admin_username(username)
+                                    # Role-based routing
+                                    if admin_user:
+                                        ui.navigate.to('/home')
+                                    else:
+                                        ui.navigate.to('/teacher')
+                                else:
+                                    ui.notify('Invalid username or password', color='#0A192F', textColor='white', position='top')
+                                    login_btn.enable()
+                                    login_spinner.classes(add='hidden')
 
-                                            # Save login state
-                                            app.storage.user['logged_in'] = True
-                                            app.storage.user['current_user'] = username
-                                            app.storage.user['username'] = username
-                                            app.storage.user['name'] = username
-                                            app.storage.user['is_admin'] = admin_user
+                            except Exception as e:
+                                print(f"Login error: {e}")
+                                ui.notify(f'An error occurred: {e}', color='#0A192F', textColor='white', position='top')
+                                login_btn.enable()
+                                login_spinner.classes(add='hidden')
 
-                                            # Record login activity
-                                            update_login_activity(username, 'Active')
+                        login_btn.on_click(handle_page)
+                        password_input.on('keydown.enter', handle_page)
 
-                                            ui.notify('Login successful!', type='positive', position='top')
-
-                                            # Role-based routing
-                                            if admin_user:
-                                                ui.navigate.to('/home')
-                                            else:
-                                                ui.navigate.to('/teacher')
-                                        else:
-                                            ui.notify('Invalid username or password', type='negative', position='top')
-                                            login_btn.enable()
-                                            login_spinner.classes(add='hidden')
-
-                                    except Exception as e:
-                                        print(f"Login error: {e}")
-                                        ui.notify(f'An error occurred: {e}', type='negative', position='top')
-                                        login_btn.enable()
-                                        login_spinner.classes(add='hidden')
-
-                                login_btn.on_click(handle_page)
-                                password_input.on('keydown.enter', handle_page)
-
+                    
+                    # REGISTER TAB
+                    with ui.tab_panel(register_tab).classes('p-0'):
+                        with ui.column().classes('w-full gap-5'):
+                            reg_user = ui.input(label='Username').classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space placeholder="Choose a username"'
+                            )
                             
-                            # REGISTER TAB
-                            
-                            with ui.tab_panel(register_tab).classes('p-0'):
-                                with ui.column().classes('w-full gap-4'):
+                            reg_email = ui.input(label='Email Address').classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space type="email" placeholder="name@school.edu"'
+                            )
 
-                                    with ui.row().classes('items-center gap-2'):
-                                        ui.icon('person').classes('text-slate-400 text-lg')
-                                        ui.label('Create Username').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            reg_pass = ui.input(
+                                label='Password',
+                                password=True,
+                                password_toggle_button=True
+                            ).classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space placeholder="Create a password"'
+                            )
 
-                                    reg_user = ui.input().classes('w-full').props(
-                                        'outlined dense rounded placeholder="Choose a username"'
-                                    )
+                            with ui.button().classes(
+                                'w-full py-3 mt-2 rounded-xl text-white font-bold text-sm tracking-wide '
+                                'bg-[#0A192F] hover:bg-[#112240] active:scale-[0.98] transition-all '
+                                'shadow-lg shadow-[#0A192F]/20 justify-center items-center gap-2'
+                            ).props('unelevated no-caps') as reg_btn:
+                                reg_spinner = ui.spinner(size='sm', color='white').classes('hidden')
+                                ui.label('Create Account').classes('font-semibold')
 
-                                    with ui.row().classes('items-center gap-2 mt-2'):
-                                        ui.icon('email').classes('text-slate-400 text-lg')
-                                        ui.label('Email Address').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            with ui.row().classes('w-full justify-center items-center gap-2 mt-4'):
+                                ui.label('Already have an account?').classes('text-xs text-[#0A192F]/60')
+                                ui.link(
+                                    'Sign in',
+                                    '#'
+                                ).on(
+                                    'click',
+                                    lambda: tabs.set_value(login_tab)
+                                ).classes(
+                                    'text-xs font-bold text-[#0A192F] hover:text-[#1E3A8A] transition-colors cursor-pointer underline'
+                                )
 
-                                    reg_email = ui.input().classes('w-full').props(
-                                        'outlined dense rounded type="email" '
-                                        'placeholder="name@school.edu"'
-                                    )
+                        async def handle_registration():
+                            if not reg_user.value or not reg_email.value or not reg_pass.value:
+                                ui.notify('All fields are required!', color='#0A192F', textColor='white', position='top')
+                                return
 
-                                    with ui.row().classes('items-center gap-2 mt-2'):
-                                        ui.icon('lock').classes('text-slate-400 text-lg')
-                                        ui.label('Password').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            reg_btn.disable()
+                            reg_spinner.classes(remove='hidden')
 
-                                    reg_pass = ui.input(
-                                        password=True,
-                                        password_toggle_button=True
-                                    ).classes('w-full').props(
-                                        'outlined dense rounded placeholder="Create a password"'
-                                    )
+                            try:
+                                add_user(
+                                    reg_user.value.strip(),
+                                    reg_pass.value,
+                                    reg_email.value.strip()
+                                )
 
-                                    with ui.button().classes(
-                                        'w-full py-4 mt-4 rounded-2xl text-white font-black '
-                                        'text-sm tracking-[0.18em] bg-gradient-to-r '
-                                        'from-[#800000] to-[#500000] hover:from-[#6d0000] '
-                                        'hover:to-[#430000] active:scale-[0.99] transition-all '
-                                        'shadow-xl shadow-[#800000]/40 justify-center items-center gap-2'
-                                    ).props('unelevated no-caps') as reg_btn:
-                                        reg_spinner = ui.spinner(size='sm', color='white').classes('hidden')
-                                        ui.label('CREATE ACCOUNT').classes('font-black')
+                                ui.notify('Registration Successful!', color='#0A192F', textColor='white', position='top')
+                                tabs.set_value(login_tab)
 
-                                    with ui.row().classes('w-full justify-center items-center gap-2 mt-3'):
-                                        ui.label('Already have an account?').classes(
-                                            'text-xs font-semibold text-slate-400'
-                                        )
-                                        ui.link(
-                                            'Sign in',
-                                            '#'
-                                        ).on(
-                                            'click',
-                                            lambda: tabs.set_value(login_tab)
-                                        ).classes(
-                                            'text-xs font-black text-[#800000] '
-                                            'hover:text-amber-600 transition-colors cursor-pointer'
-                                        )
+                            except Exception as e:
+                                print(f"Registration error: {e}")
+                                ui.notify('Registration failed.', color='#0A192F', textColor='white', position='top')
 
-                                async def handle_registration():
-                                    if not reg_user.value or not reg_email.value or not reg_pass.value:
-                                        ui.notify('All fields are required!', type='warning', position='top')
-                                        return
+                            finally:
+                                reg_btn.enable()
+                                reg_spinner.classes(add='hidden')
 
-                                    reg_btn.disable()
-                                    reg_spinner.classes(remove='hidden')
+                        reg_btn.on_click(handle_registration)
+                        reg_pass.on('keydown.enter', handle_registration)
 
-                                    try:
-                                        add_user(
-                                            reg_user.value.strip(),
-                                            reg_pass.value,
-                                            reg_email.value.strip()
-                                        )
+                    
+                    # RESET PASSWORD TAB
+                    with ui.tab_panel(reset_tab).classes('p-0'):
+                        with ui.column().classes('w-full gap-5'):
+                            reset_user = ui.input(label='Username').classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space placeholder="Enter your username"'
+                            )
 
-                                        ui.notify('Registration Successful!', type='positive', position='top')
-                                        tabs.set_value(login_tab)
+                            reset_email = ui.input(label='Email Address').classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space type="email" placeholder="name@school.edu"'
+                            )
 
-                                    except Exception as e:
-                                        print(f"Registration error: {e}")
-                                        ui.notify('Registration failed.', type='negative', position='top')
+                            reset_pass = ui.input(
+                                label='New Password',
+                                password=True,
+                                password_toggle_button=True
+                            ).classes('w-full').props(
+                                'outlined dense rounded standout hide-bottom-space placeholder="Enter new password"'
+                            )
 
-                                    finally:
-                                        reg_btn.enable()
-                                        reg_spinner.classes(add='hidden')
+                            with ui.button().classes(
+                                'w-full py-3 mt-2 rounded-xl text-white font-bold text-sm tracking-wide '
+                                'bg-[#0A192F] hover:bg-[#112240] active:scale-[0.98] transition-all '
+                                'shadow-lg shadow-[#0A192F]/20 justify-center items-center gap-2'
+                            ).props('unelevated no-caps') as reset_btn:
+                                reset_spinner = ui.spinner(size='sm', color='white').classes('hidden')
+                                ui.label('Reset Password').classes('font-semibold')
 
-                                reg_btn.on_click(handle_registration)
-                                reg_pass.on('keydown.enter', handle_registration)
+                            with ui.row().classes('w-full justify-center items-center gap-2 mt-4'):
+                                ui.label('Remembered your password?').classes('text-xs text-[#0A192F]/60')
+                                ui.link(
+                                    'Back to Login',
+                                    '#'
+                                ).on(
+                                    'click',
+                                    lambda: tabs.set_value(login_tab)
+                                ).classes(
+                                    'text-xs font-bold text-[#0A192F] hover:text-[#1E3A8A] transition-colors cursor-pointer underline'
+                                )
 
-                            
-                            # RESET PASSWORD TAB
-                            
-                            with ui.tab_panel(reset_tab).classes('p-0'):
-                                with ui.column().classes('w-full gap-4'):
+                        async def handle_reset():
+                            reset_btn.disable()
+                            reset_spinner.classes(remove='hidden')
 
-                                    with ui.row().classes('items-center gap-2'):
-                                        ui.icon('person').classes('text-slate-400 text-lg')
-                                        ui.label('Username').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            try:
+                                reset_password(
+                                    reset_user.value.strip(),
+                                    reset_email.value.strip(),
+                                    reset_pass.value
+                                )
 
-                                    reset_user = ui.input().classes('w-full').props(
-                                        'outlined dense rounded placeholder="Enter your username"'
-                                    )
+                                ui.notify('Password updated!', color='#0A192F', textColor='white', position='top')
+                                tabs.set_value(login_tab)
 
-                                    with ui.row().classes('items-center gap-2 mt-2'):
-                                        ui.icon('email').classes('text-slate-400 text-lg')
-                                        ui.label('Email Address').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
+                            except Exception as e:
+                                print(f"Reset password error: {e}")
+                                ui.notify('Reset failed.', color='#0A192F', textColor='white', position='top')
 
-                                    reset_email = ui.input().classes('w-full').props(
-                                        'outlined dense rounded type="email" '
-                                        'placeholder="name@school.edu"'
-                                    )
+                            finally:
+                                reset_btn.enable()
+                                reset_spinner.classes(add='hidden')
 
-                                    with ui.row().classes('items-center gap-2 mt-2'):
-                                        ui.icon('key').classes('text-slate-400 text-lg')
-                                        ui.label('New Password').classes(
-                                            'text-xs font-black uppercase tracking-widest text-slate-500'
-                                        )
-
-                                    reset_pass = ui.input(
-                                        password=True,
-                                        password_toggle_button=True
-                                    ).classes('w-full').props(
-                                        'outlined dense rounded placeholder="Enter new password"'
-                                    )
-
-                                    with ui.button().classes(
-                                        'w-full py-4 mt-4 rounded-2xl text-white font-black '
-                                        'text-sm tracking-[0.18em] bg-gradient-to-r '
-                                        'from-[#800000] to-[#500000] hover:from-[#6d0000] '
-                                        'hover:to-[#430000] active:scale-[0.99] transition-all '
-                                        'shadow-xl shadow-[#800000]/40 justify-center items-center gap-2'
-                                    ).props('unelevated no-caps') as reset_btn:
-                                        reset_spinner = ui.spinner(size='sm', color='white').classes('hidden')
-                                        ui.label('RESET PASSWORD').classes('font-black')
-
-                                    with ui.row().classes('w-full justify-center items-center gap-2 mt-3'):
-                                        ui.label('Remembered your password?').classes(
-                                            'text-xs font-semibold text-slate-400'
-                                        )
-                                        ui.link(
-                                            'Back to Login',
-                                            '#'
-                                        ).on(
-                                            'click',
-                                            lambda: tabs.set_value(login_tab)
-                                        ).classes(
-                                            'text-xs font-black text-[#800000] '
-                                            'hover:text-amber-600 transition-colors cursor-pointer'
-                                        )
-
-                                async def handle_reset():
-                                    reset_btn.disable()
-                                    reset_spinner.classes(remove='hidden')
-
-                                    try:
-                                        reset_password(
-                                            reset_user.value.strip(),
-                                            reset_email.value.strip(),
-                                            reset_pass.value
-                                        )
-
-                                        ui.notify('Password updated!', type='positive', position='top')
-                                        tabs.set_value(login_tab)
-
-                                    except Exception as e:
-                                        print(f"Reset password error: {e}")
-                                        ui.notify('Reset failed.', type='negative', position='top')
-
-                                    finally:
-                                        reset_btn.enable()
-                                        reset_spinner.classes(add='hidden')
-
-                                reset_btn.on_click(handle_reset)
-                                reset_pass.on('keydown.enter', handle_reset)
+                        reset_btn.on_click(handle_reset)
+                        reset_pass.on('keydown.enter', handle_reset)
 
         # Footer
         with ui.row().classes(
             'fixed bottom-5 left-0 right-0 z-20 justify-center items-center pointer-events-none'
         ):
             ui.label('Designed by Apostle').classes(
-                'text-[11px] font-bold uppercase tracking-[0.25em] text-white/45'
+                'text-[11px] font-bold uppercase tracking-[0.25em] text-white/60'
             )
 
 
