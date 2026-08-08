@@ -141,27 +141,47 @@ ui.add_css('''
     animation: floatSoft 9s ease-in-out infinite;
 }
 
+/* Notifications */
+.q-notification {
+    border-radius: 18px !important;
+    max-width: calc(100vw - 24px) !important;
+}
+
+.q-notification--positive {
+    background: #f59e0b !important;
+    color: #1e3a8a !important;
+}
+
+.q-notification--negative,
+.q-notification--warning {
+    background: #1e3a8a !important;
+    color: #ffffff !important;
+}
+
 /* Scoped auth card styles */
 .auth-card .primary-tabs .q-tabs__content {
     background: #eff6ff;
-    padding: 6px;
-    border-radius: 22px;
-    gap: 6px;
+    padding: 5px;
+    border-radius: 20px;
+    gap: 5px;
+    width: 100%;
 }
 
 .auth-card .primary-tabs .q-tab {
-    flex: 1;
-    border-radius: 18px;
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 16px;
     color: #1e3a8a;
     text-transform: none;
     font-weight: 800;
-    min-height: 46px;
-    padding: 0 14px;
+    min-height: 48px;
+    padding: 0 8px;
 }
 
 .auth-card .primary-tabs .q-tab__label {
-    font-size: 13px;
-    letter-spacing: .08em;
+    font-size: 12px;
+    letter-spacing: .05em;
+    white-space: nowrap;
 }
 
 .auth-card .primary-tabs .q-tab--active {
@@ -180,8 +200,9 @@ ui.add_css('''
 /* Inputs */
 .auth-card .q-field--outlined .q-field__control {
     border-radius: 18px !important;
-    min-height: 54px !important;
+    min-height: 56px !important;
     background-color: #ffffff !important;
+    padding: 0 16px !important;
 }
 
 .auth-card .q-field--outlined .q-field__control:before {
@@ -205,14 +226,25 @@ ui.add_css('''
 .auth-card .q-field__native,
 .auth-card .q-field__input {
     color: #1e3a8a !important;
+    font-size: 16px !important;
+}
+
+.auth-card input {
+    font-size: 16px !important;
+}
+
+.auth-card input::placeholder {
+    color: #94a3b8 !important;
+    opacity: 1 !important;
+    font-size: 15px !important;
 }
 
 /* Buttons */
 .auth-card .btn-sun {
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
     color: #1e3a8a !important;
-    border-radius: 20px !important;
-    min-height: 54px !important;
+    border-radius: 18px !important;
+    min-height: 56px !important;
     box-shadow: 0 16px 30px -18px rgba(245, 158, 11, 0.8) !important;
     text-transform: none !important;
 }
@@ -245,6 +277,29 @@ ui.add_css('''
 .auth-card .q-tab-panel {
     background: transparent !important;
     padding: 0 !important;
+}
+
+/* Larger screens */
+@media (min-width: 768px) {
+    .auth-card .primary-tabs .q-tabs__content {
+        padding: 6px;
+        border-radius: 22px;
+        gap: 6px;
+    }
+
+    .auth-card .primary-tabs .q-tab {
+        min-height: 50px;
+        border-radius: 18px;
+        padding: 0 14px;
+    }
+
+    .auth-card .primary-tabs .q-tab__label {
+        font-size: 13px;
+    }
+
+    .auth-card .btn-sun {
+        border-radius: 20px !important;
+    }
 }
 ''')
 
@@ -326,11 +381,11 @@ def lower_page():
 
 # ============================================================
 # REDESIGNED LOGIN PAGE
-# Navy blue + white primary, warm amber accent for primary teachers
+# Mobile-friendly navy blue, white, and warm amber design
 # ============================================================
 def login_page():
     with ui.element('div').classes(
-        'fixed inset-0 h-screen w-screen overflow-y-auto bg-[#f8fafc]'
+        'fixed inset-0 h-screen w-screen overflow-y-auto overflow-x-hidden bg-[#f8fafc]'
     ):
         # Soft background decorations
         ui.element('div').classes(
@@ -350,17 +405,19 @@ def login_page():
 
         # Main centered content
         with ui.column().classes(
-            'relative z-10 min-h-screen w-full items-center justify-center p-4 md:p-8'
+            'relative z-10 min-h-screen w-full items-center justify-center '
+            'p-4 pb-16 md:p-8 md:pb-10'
         ):
             with ui.card().classes(
-                'auth-card w-full max-w-5xl rounded-[36px] border border-[#1e3a8a]/10 '
-                'bg-white shadow-2xl shadow-[#1e3a8a]/15 overflow-hidden animate-fade-in-up'
+                'auth-card w-full max-w-5xl rounded-3xl md:rounded-[36px] '
+                'border border-[#1e3a8a]/10 bg-white shadow-2xl shadow-[#1e3a8a]/15 '
+                'overflow-hidden animate-fade-in-up'
             ).tight():
 
                 with ui.row().classes('w-full m-0 gap-0 items-stretch'):
 
                     # ============================================================
-                    # LEFT VISUAL PANEL
+                    # LEFT VISUAL PANEL - hidden on mobile
                     # ============================================================
                     with ui.column().classes(
                         'hidden md:flex w-full md:w-2/5 bg-[#1e3a8a] relative overflow-hidden '
@@ -449,7 +506,7 @@ def login_page():
                     # RIGHT FORM PANEL
                     # ============================================================
                     with ui.column().classes(
-                        'w-full md:w-3/5 bg-white p-6 md:p-12'
+                        'w-full md:w-3/5 bg-white p-5 sm:p-8 md:p-10 xl:p-12'
                     ):
                         with ui.column().classes('w-full max-w-[520px] mx-auto'):
 
@@ -466,7 +523,7 @@ def login_page():
                                 )
 
                                 ui.label('Bright, simple access for teachers').classes(
-                                    'text-sm text-slate-500 text-center'
+                                    'text-sm text-slate-500 text-center mt-1'
                                 )
 
                             # Desktop header
@@ -561,7 +618,7 @@ def login_page():
                                         ).props('unelevated no-caps') as login_btn:
                                             login_spinner = ui.spinner(
                                                 size='sm',
-                                                color='#1e3a8a'
+                                                color='primary'
                                             ).classes('hidden')
 
                                             ui.label('Sign in').classes(
@@ -701,7 +758,7 @@ def login_page():
                                         ).props('unelevated no-caps') as reg_btn:
                                             reg_spinner = ui.spinner(
                                                 size='sm',
-                                                color='#1e3a8a'
+                                                color='primary'
                                             ).classes('hidden')
 
                                             ui.label('Create Account').classes(
@@ -820,7 +877,7 @@ def login_page():
                                         ).props('unelevated no-caps') as reset_btn:
                                             reset_spinner = ui.spinner(
                                                 size='sm',
-                                                color='#1e3a8a'
+                                                color='primary'
                                             ).classes('hidden')
 
                                             ui.label('Reset Password').classes(
@@ -870,12 +927,10 @@ def login_page():
                                     reset_btn.on_click(handle_reset)
                                     reset_pass.on('keydown.enter', handle_reset)
 
-        # Footer
-        with ui.row().classes(
-            'fixed bottom-5 left-0 right-0 z-20 justify-center items-center pointer-events-none'
-        ):
+            # Footer below the card so it does not overlap mobile content
             ui.label('Designed by Apostle').classes(
-                'text-[11px] font-bold uppercase tracking-[0.25em] text-[#1e3a8a]/35'
+                'mt-6 text-center text-[10px] md:text-[11px] font-bold uppercase '
+                'tracking-[0.25em] text-[#1e3a8a]/35'
             )
 
 
