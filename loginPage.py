@@ -456,17 +456,17 @@ def login_page():
                                         ui.icon('school').classes('text-4xl text-[#1e3a8a]')
 
                                     with ui.column().classes('gap-1'):
-                                        ui.label('School Portal').classes(
+                                        ui.label('Jalie Junior School Portal').classes(
                                             'text-2xl font-extrabold text-white'
                                         )
-                                        ui.label('Bright tools for teachers').classes(
+                                        ui.label('No Sweat No sweet').classes(
                                             'text-[10px] font-bold uppercase tracking-[0.28em] '
                                             'text-[#f59e0b]'
                                         )
 
                                 ui.label(
-                                    'A friendly, organised place to manage lessons, pupils, '
-                                    'and school updates without the clutter.'
+                                    'Jalie Junior school report management system, '
+                                    'and results management portal.'
                                 ).classes('text-base leading-relaxed text-white/80')
 
                                 with ui.column().classes('gap-3'):
@@ -474,7 +474,7 @@ def login_page():
                                         'items-center gap-3 rounded-2xl border border-white/10 '
                                         'bg-white/5 px-4 py-3 backdrop-blur-sm'
                                     ):
-                                        ui.icon('menu_book').classes('text-xl text-[#f59e0b]')
+                                        #ui.icon('menu_book').classes('text-xl text-[#f59e0b]')
                                         ui.label('Lesson-ready workspace').classes(
                                             'text-sm font-semibold text-white'
                                         )
@@ -518,11 +518,11 @@ def login_page():
                                 ):
                                     ui.icon('school').classes('text-3xl text-[#f59e0b]')
 
-                                ui.label('School Portal').classes(
+                                ui.label('Jalie Junior School Portal').classes(
                                     'text-2xl font-extrabold text-[#1e3a8a] text-center'
                                 )
 
-                                ui.label('Bright, simple access for teachers').classes(
+                                ui.label('No Sweat No Sweet').classes(
                                     'text-sm text-slate-500 text-center mt-1'
                                 )
 
